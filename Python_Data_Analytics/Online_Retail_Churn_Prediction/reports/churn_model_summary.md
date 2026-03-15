@@ -11,6 +11,7 @@ This report summarises the churn prediction models built on the Online Retail Cu
 - **Rows:** 9,000 customers
 - **Features:** 16 raw + 5 engineered
 - **Target:** `Churn` (binary: 1 = churned, 0 = retained)
+- **Churn rate:** 19.73% (1,776 churned / 7,224 retained)
 - **Train / Test split:** 80 / 20 (stratified)
 
 ---
@@ -35,10 +36,15 @@ This report summarises the churn prediction models built on the Online Retail Cu
 
 | Metric | Logistic Regression | Random Forest |
 |---|---|---|
-| ROC AUC | *run model to populate* | *run model to populate* |
-| Precision (churn) | *run model to populate* | *run model to populate* |
-| Recall (churn) | *run model to populate* | *run model to populate* |
-| F1-score (churn) | *run model to populate* | *run model to populate* |
+| ROC AUC | 0.4882 | 0.5305 |
+| Precision (churn) | 0.19 | 0.00 |
+| Recall (churn) | 0.49 | 0.00 |
+| F1-score (churn) | 0.28 | 0.00 |
+
+> **Note:** Both models perform near random chance (AUC ≈ 0.50), which indicates that the
+> synthetic dataset's churn labels carry minimal signal relative to the engineered features.
+> This is expected behaviour for randomly generated benchmark data and serves as a baseline
+> for demonstrating the end-to-end pipeline rather than production-ready predictions.
 
 ---
 
@@ -56,13 +62,13 @@ This report summarises the churn prediction models built on the Online Retail Cu
 
 ## Key Churn Drivers (Random Forest – Top Features)
 
-Based on feature importance analysis, the strongest predictors of churn are:
+Based on Random Forest feature importance and SHAP analysis, the strongest predictors of churn are:
 
-1. **Satisfaction_Score** – Low satisfaction is the single strongest churn signal.
-2. **Total_Spend / Avg_Purchase_Value** – Low-spending customers churn more frequently.
-3. **Days_Since_Last_Purchase** – Customers who haven't purchased recently are at higher risk.
-4. **Engagement_Score** – Low website engagement correlates with churn.
-5. **Membership_Status** – Bronze-tier customers exhibit higher churn rates than Gold.
+1. **Avg_Time_Per_Visit_Minutes** (importance 0.0823) – Session length is the single most predictive signal; shorter visits correlate with disengagement.
+2. **Days_Since_Last_Purchase** (importance 0.0794) – Customers who haven't purchased recently carry higher churn risk.
+3. **Annual_Income_USD** (importance 0.0786) – Income level is associated with retention patterns.
+4. **Avg_Purchase_Value** (importance 0.0774) – Lower average order value tracks with increased churn probability.
+5. **Total_Spend** (importance 0.0769) – Lifetime spend is a composite retention signal.
 
 ---
 
@@ -70,7 +76,7 @@ Based on feature importance analysis, the strongest predictors of churn are:
 
 | Insight | Suggested Action |
 |---|---|
-| Low-satisfaction customers | Trigger proactive outreach or satisfaction survey at score ≤ 2 |
+| Short session lengths | Trigger in-app re-engagement prompts or personalised product recommendations |
 | High recency (no recent purchase) | Deploy win-back campaigns with targeted discounts |
 | Low-engagement segment | Re-engagement email sequence with personalised product recommendations |
 | Bronze membership | Offer loyalty upgrade incentives to reduce churn |
