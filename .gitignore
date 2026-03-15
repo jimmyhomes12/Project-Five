@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Trained model artifacts (regenerate with src/train_model.py)
+Python_Data_Analytics/Online_Retail_Churn_Prediction/models/*.pkl
+
+# Generated processed data (regenerate with src/data_prep.py)
+Python_Data_Analytics/Online_Retail_Churn_Prediction/data/processed/
+
+# Generated report images (regenerate with src/evaluate.py)
+Python_Data_Analytics/Online_Retail_Churn_Prediction/reports/*.png
