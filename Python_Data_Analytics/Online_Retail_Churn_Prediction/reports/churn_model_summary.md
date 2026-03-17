@@ -62,13 +62,27 @@ This report summarises the churn prediction models built on the Online Retail Cu
 
 ## Key Churn Drivers (Random Forest – Top Features)
 
-Based on Random Forest feature importance and SHAP analysis, the strongest predictors of churn are:
+### Feature importance (mean decrease in impurity)
 
-1. **Avg_Time_Per_Visit_Minutes** (importance 0.0823) – Session length is the single most predictive signal; shorter visits correlate with disengagement.
-2. **Days_Since_Last_Purchase** (importance 0.0794) – Customers who haven't purchased recently carry higher churn risk.
-3. **Annual_Income_USD** (importance 0.0786) – Income level is associated with retention patterns.
-4. **Avg_Purchase_Value** (importance 0.0774) – Lower average order value tracks with increased churn probability.
-5. **Total_Spend** (importance 0.0769) – Lifetime spend is a composite retention signal.
+| Rank | Feature | Importance |
+|---|---|---|
+| 1 | Avg_Time_Per_Visit_Minutes | 0.0823 |
+| 2 | Days_Since_Last_Purchase | 0.0794 |
+| 3 | Annual_Income_USD | 0.0786 |
+| 4 | Avg_Purchase_Value | 0.0774 |
+| 5 | Total_Spend | 0.0769 |
+
+### SHAP feature importance (mean absolute SHAP value, 200-row sample)
+
+| Rank | Feature | Mean \|SHAP\| |
+|---|---|---|
+| 1 | Avg_Purchase_Value | 0.024924 |
+| 2 | Annual_Income_USD | 0.024609 |
+| 3 | Avg_Time_Per_Visit_Minutes | 0.024370 |
+| 4 | Days_Since_Last_Purchase | 0.023107 |
+| 5 | Total_Spend | 0.022802 |
+
+Both methods surface the same five features as the dominant churn drivers. The slight difference in ordering (e.g. Avg_Purchase_Value rises to #1 under SHAP) reflects that SHAP measures individual-prediction impact rather than averaged split purity, but the practical insight is the same: session quality, recency, income, and spend metrics together explain the majority of the model's predictions.
 
 ---
 
