@@ -4,13 +4,16 @@ evaluate.py
 Load persisted models and produce evaluation plots:
   - ROC curves for both models
   - Feature importances for the Random Forest model
+  - SHAP summary plot for model interpretability
 """
 
 import pickle
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import shap
 from sklearn.metrics import RocCurveDisplay, roc_auc_score
 
 from src.data_prep import clean, load_raw
@@ -85,16 +88,70 @@ def plot_feature_importances(rf, X_test: pd.DataFrame) -> None:
     plt.show()
 
 
+def plot_shap_summary(rf, X_test: pd.DataFrame, feature_names: list[str]) -> None:
+    """Generate and save a SHAP summary bar plot for the Random Forest model."""
+    rf_model = rf.named_steps["model"]
+    preprocessor = rf.named_steps["preprocess"]
+
+    # Use a sample of 200 rows to keep computation tractable
+    rng = np.random.RandomState(42)
+    n_sample = min(200, len(X_test))
+    idx = rng.choice(len(X_test), size=n_sample, replace=False)
+    X_sample_trans = preprocessor.transform(X_test.iloc[idx])
+
+    explainer = shap.TreeExplainer(rf_model)
+    shap_values = explainer.shap_values(X_sample_trans)
+
+    # shap_values may be (n_samples, n_features, n_classes) or a list
+    sv = np.array(shap_values)
+    sv_churn = sv[:, :, 1] if sv.ndim == 3 else shap_values[1]
+
+    plt.figure(figsize=(10, 6))
+    shap.summary_plot(
+        sv_churn,
+        X_sample_trans,
+        feature_names=feature_names,
+        max_display=15,
+        plot_type="bar",
+        show=False,
+    )
+    plt.title("SHAP Feature Importance – Top Drivers of Churn Prediction")
+    plt.tight_layout()
+
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    out = REPORTS_DIR / "shap_summary.png"
+    plt.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"Saved SHAP summary → {out}")
+
+    # Print top SHAP features
+    shap_imp = pd.Series(np.abs(sv_churn).mean(axis=0), index=feature_names).nlargest(5)
+    print("Top 5 SHAP features (mean |SHAP value|):")
+    for feat, val in shap_imp.items():
+        print(f"  {feat}: {val:.6f}")
+
+
 def run() -> None:
     logreg = load_model("churn_logreg.pkl")
     rf = load_model("churn_tree.pkl")
     X_test, y_test = get_test_data()
 
-    print("Logistic Regression ROC AUC:", roc_auc_score(y_test, logreg.predict_proba(X_test)[:, 1]))
-    print("Random Forest      ROC AUC:", roc_auc_score(y_test, rf.predict_proba(X_test)[:, 1]))
+    lr_auc = roc_auc_score(y_test, logreg.predict_proba(X_test)[:, 1])
+    rf_auc = roc_auc_score(y_test, rf.predict_proba(X_test)[:, 1])
+    print(f"Logistic Regression ROC AUC: {lr_auc:.4f}")
+    print(f"Random Forest      ROC AUC: {rf_auc:.4f}")
 
     plot_roc_curves(logreg, rf, X_test, y_test)
+
+    # Reconstruct feature names for importance and SHAP plots
+    preprocessor = rf.named_steps["preprocess"]
+    num_names = list(preprocessor.transformers_[0][2])
+    cat_encoder = preprocessor.transformers_[1][1]
+    cat_names = cat_encoder.get_feature_names_out(preprocessor.transformers_[1][2]).tolist()
+    feature_names = num_names + cat_names
+
     plot_feature_importances(rf, X_test)
+    plot_shap_summary(rf, X_test, feature_names)
 
 
 if __name__ == "__main__":
