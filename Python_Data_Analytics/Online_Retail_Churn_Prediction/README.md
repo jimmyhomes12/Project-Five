@@ -84,6 +84,24 @@ Metrics: ROC AUC, precision, recall, F1-score, confusion matrix.
 ### Interpretability
 Top-20 feature importances and SHAP summary plots from the Random Forest reveal which signals most increase churn risk. SHAP plots are saved automatically to `reports/shap_summary.png` when running `src/evaluate.py`.
 
+## Model Performance Summary
+
+```text
+=======================================================
+  KEY METRICS SUMMARY
+=======================================================
+  Churn rate          : 19.73%  (1,776 / 9,000 customers)
+  Random Forest AUC   : 0.5305
+
+  Top 3 most important features (Random Forest):
+    1. Avg_Time_Per_Visit_Minutes  (importance 0.0823)
+    2. Days_Since_Last_Purchase    (importance 0.0794)
+    3. Annual_Income_USD           (importance 0.0786)
+=======================================================
+```
+
+> The model is only slightly better than random (AUC ≈ 0.53), highlighting that churn is hard to predict from the available features, but it still reveals that visit time, recency, and income are the main behavioral and demographic signals.
+
 ## Key findings
 
 - **Churn rate:** 19.73% of the 9,000 customers churned (1,776 out of 9,000).
