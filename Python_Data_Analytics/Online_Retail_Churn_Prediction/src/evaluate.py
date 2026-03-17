@@ -133,7 +133,7 @@ def plot_shap_summary(rf, X_test: pd.DataFrame, feature_names: list[str]) -> Non
 
 def run() -> None:
     logreg = load_model("churn_logreg.pkl")
-    rf = load_model("churn_tree.pkl")
+    rf = load_model("churn_rf.pkl")
     X_test, y_test = get_test_data()
 
     lr_auc = roc_auc_score(y_test, logreg.predict_proba(X_test)[:, 1])
