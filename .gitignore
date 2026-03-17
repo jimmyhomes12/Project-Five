@@ -9,11 +9,14 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# Trained model artifacts (regenerate with src/train_model.py)
-Python_Data_Analytics/Online_Retail_Churn_Prediction/models/*.pkl
+# Large model artifacts – tracked for portfolio visibility
+# (regenerate with: python -m src.train_model)
+# Python_Data_Analytics/Online_Retail_Churn_Prediction/models/*.pkl
 
-# Generated processed data (regenerate with src/data_prep.py)
-Python_Data_Analytics/Online_Retail_Churn_Prediction/data/processed/
+# Generated processed data – tracked for portfolio reproducibility
+# (regenerate with: python -m src.data_prep)
+# Python_Data_Analytics/Online_Retail_Churn_Prediction/data/processed/
 
-# Generated report images (regenerate with src/evaluate.py)
-Python_Data_Analytics/Online_Retail_Churn_Prediction/reports/*.png
+# Generated report images – tracked for portfolio visibility
+# (regenerate with: python -m src.evaluate)
+# Python_Data_Analytics/Online_Retail_Churn_Prediction/reports/*.png

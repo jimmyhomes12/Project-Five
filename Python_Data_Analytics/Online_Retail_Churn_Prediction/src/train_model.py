@@ -90,7 +90,7 @@ def run() -> None:
     rf = build_rf_pipeline(X_train)
     rf.fit(X_train, y_train)
     evaluate("Random Forest", rf, X_test, y_test)
-    save_model(rf, "churn_tree.pkl")
+    save_model(rf, "churn_rf.pkl")
 
 
 if __name__ == "__main__":

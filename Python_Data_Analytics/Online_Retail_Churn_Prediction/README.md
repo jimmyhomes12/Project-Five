@@ -50,9 +50,12 @@ Online_Retail_Churn_Prediction/
 │   └── evaluate.py
 ├── models/
 │   ├── churn_logreg.pkl
-│   └── churn_tree.pkl
+│   └── churn_rf.pkl
 ├── reports/
-│   └── churn_model_summary.md
+│   ├── churn_model_summary.md
+│   ├── roc_curves.png
+│   ├── feature_importances.png
+│   └── shap_summary.png
 ├── requirements.txt
 └── README.md
 ```
@@ -92,6 +95,7 @@ Top-20 feature importances and SHAP summary plots from the Random Forest reveal 
 =======================================================
   Churn rate          : 19.73%  (1,776 / 9,000 customers)
   Random Forest AUC   : 0.5305
+  Logistic Regression AUC : 0.4882
 
   Top 3 most important features (Random Forest):
     1. Avg_Time_Per_Visit_Minutes  (importance 0.0823)
@@ -101,6 +105,20 @@ Top-20 feature importances and SHAP summary plots from the Random Forest reveal 
 ```
 
 > The model is only slightly better than random (AUC ≈ 0.53), highlighting that churn is hard to predict from the available features, but it still reveals that visit time, recency, and income are the main behavioral and demographic signals.
+
+**ROC Curves:**
+
+![ROC Curves](reports/roc_curves.png)
+
+## SHAP / Feature Insights
+
+**Top-20 Feature Importances (Random Forest):**
+
+![Feature Importances](reports/feature_importances.png)
+
+**SHAP Summary – Top Drivers of Churn Prediction:**
+
+![SHAP Summary](reports/shap_summary.png)
 
 ## Key findings
 
